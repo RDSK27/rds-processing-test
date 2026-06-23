@@ -173,6 +173,20 @@ if('serviceWorker' in navigator){
   .stim-glyph{color:#fff;font-weight:900;font-size:64px;line-height:1;-webkit-text-stroke:2px var(--negro);text-stroke:2px var(--negro);paint-order:stroke fill;}
   @keyframes rdsblink { 0%,55%{opacity:1;} 56%,100%{opacity:0.12;} }
   #game .stat.main .v.blink{ animation:rdsblink 0.9s steps(1,end) infinite; }
+  #extremo-info .info-scroll{flex:1;min-height:0;overflow-y:auto;padding:14px 16px 10px;}
+  #extremo-info .info-title{font-size:1.4rem;font-weight:900;text-align:center;color:var(--rojo);text-transform:uppercase;letter-spacing:1px;margin:2px 0;}
+  #extremo-info .info-sub{font-size:0.8rem;text-align:center;color:#555;margin-bottom:12px;}
+  #extremo-info .info-row{display:flex;align-items:center;gap:12px;margin-bottom:11px;}
+  #extremo-info .info-text{font-size:0.86rem;line-height:1.25;color:var(--negro);}
+  .ex-box{width:62px;height:42px;flex:0 0 62px;border-radius:6px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;overflow:hidden;}
+  .ex-box.rojo{background:var(--rojo);} .ex-box.azul{background:var(--azul);}
+  .ex-box.blanco{background:#fff;border:2px solid var(--negro);} .ex-box.negro{background:var(--negro);}
+  .ex-box.split{padding:0;border:2px solid var(--negro);}
+  .ex-h{flex:1;height:100%;display:block;} .ex-h.r{background:var(--rojo);} .ex-h.b{background:var(--azul);}
+  .ex-glyph{color:#fff;font-weight:900;font-size:26px;line-height:1;-webkit-text-stroke:1.5px var(--negro);paint-order:stroke fill;}
+  .ex-glyph.blk{color:var(--negro);}
+  .ex-arrow{width:46px;height:30px;display:block;}
+  #extremo-info .info-start{flex:0 0 auto;text-align:center;font-weight:800;color:var(--rojo);padding:12px;border-top:2px solid var(--rojo);font-size:1.05rem;text-transform:uppercase;letter-spacing:1px;animation:rdsblink 1.1s steps(1,end) infinite;}
   .pad{flex:1;min-height:0;display:flex;border:2px solid var(--negro);border-radius:8px;overflow:hidden;}
   .pad-half{flex:1;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:30px;letter-spacing:1px;text-transform:uppercase;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;}
   .pad-half span{pointer-events:none;}
@@ -422,6 +436,22 @@ if('serviceWorker' in navigator){
   </div>
   </section>
 
+  <section id="extremo-info" class="screen">
+    <div class="info-scroll">
+      <div class="info-title">Modo Extremo</div>
+      <div class="info-sub">Seg&#250;n lo que aparezca, pulsa Rojo o Azul:</div>
+      <div class="info-row"><div class="ex-box rojo"><span class="ex-glyph">&#8722;</span></div><div class="info-text"><b>&#8722;</b> : pulsa el <b>color del rect&#225;ngulo</b>.</div></div>
+      <div class="info-row"><div class="ex-box rojo"><span class="ex-glyph">A</span></div><div class="info-text"><b>A</b> : pulsa <b>Azul</b> (da igual el color del rect&#225;ngulo).</div></div>
+      <div class="info-row"><div class="ex-box azul"><span class="ex-glyph">R</span></div><div class="info-text"><b>R</b> : pulsa <b>Rojo</b> (da igual el color del rect&#225;ngulo).</div></div>
+      <div class="info-row"><div class="ex-box rojo"><svg class="ex-arrow" viewBox="0 0 100 64"><path d="M6,21 L58,21 L58,6 L95,32 L58,58 L58,43 L6,43 Z" fill="#fff" stroke="#111111" stroke-width="6" stroke-linejoin="round"/></svg></div><div class="info-text"><b>Flecha blanca</b> : pulsa hacia <b>donde apunta</b> (izquierda o derecha).</div></div>
+      <div class="info-row"><div class="ex-box azul"><svg class="ex-arrow" viewBox="0 0 100 64"><path d="M6,21 L58,21 L58,6 L95,32 L58,58 L58,43 L6,43 Z" fill="#A23A29" stroke="#111111" stroke-width="6" stroke-linejoin="round"/></svg></div><div class="info-text"><b>Flecha roja o azul</b> : pulsa <b>ese color</b> (la direcci&#243;n enga&#241;a).</div></div>
+      <div class="info-row"><div class="ex-box blanco"><span class="ex-glyph blk">&#8722;</span></div><div class="info-text"><b>Rect&#225;ngulo blanco</b> : repite el <b>mismo color</b> del ensayo anterior.</div></div>
+      <div class="info-row"><div class="ex-box negro"><span class="ex-glyph">&#8722;</span></div><div class="info-text"><b>Rect&#225;ngulo negro</b> : pulsa el <b>color contrario</b> al anterior.</div></div>
+      <div class="info-row"><div class="ex-box split"><span class="ex-h r"></span><span class="ex-h b"></span></div><div class="info-text"><b>Ojo</b> : los lados <b>Rojo y Azul pueden intercambiarse</b> de repente.</div></div>
+    </div>
+    <div class="info-start" id="infoStart">Toca para empezar</div>
+  </section>
+
   <section id="ranking" class="screen">
     <div class="rank-body">
       <div class="rank-screen-title">Ranking completo</div>
@@ -549,9 +579,11 @@ function startGame(){
   var nm=($('user-ini-input').value||'RDS').toUpperCase().replace(/[^A-Z]/g,'').slice(0,3);
   S.name=nm||'RDS';
   S.sport=($('user-sport-select')&&$('user-sport-select').value)||'';
-  runGame();
+  if(S.mode==='extremo'){ showExtremoInfo(); } else { runGame(); }
 }
 function repeatGame(){ runGame(); }
+function showExtremoInfo(){ show('extremo-info'); var sc=$('extremo-info').querySelector('.info-scroll'); if(sc) sc.scrollTop=0; }
+function startExtremoFromInfo(){ var inf=$('extremo-info'); if(!inf||!inf.classList.contains('active')) return; runGame(); }
 
 function shuffleArr(a){ var i,j,t; for(i=a.length-1;i>0;i--){ j=Math.floor(Math.random()*(i+1)); t=a[i];a[i]=a[j];a[j]=t; } return a; }
 
@@ -570,7 +602,7 @@ function limitFor(i){
   if(i>=span) return 350;
   return Math.floor(500 - 150*i/span + 1e-6);
 }
-function budgetMs(total){ return (total===15?5:(total===25?9:17))*1000; }
+function budgetMs(total){ return total===15?4500:(total===25?8000:15000); }
 function fmtChrono(ms){
   if(ms<0) ms=0;
   var m=Math.floor(ms/60000); ms-=m*60000;
@@ -744,6 +776,7 @@ function showStim(){
   var tmo;
   if(S.mode==='limite' && S.stim==='fijo') tmo=limitFor(S.trial);
   else if(S.mode==='limite' && S.stim==='cambia') tmo=0;
+  else if(S.mode==='extremo') tmo=3000;
   else tmo=2000;
   if(tmo>0) S.limitTo=setTimeout(onStimTimeout, tmo);
 }
@@ -1056,6 +1089,11 @@ function renderRank(mode,stim,total){
 function goHome(){ if(S.countIv){clearInterval(S.countIv);S.countIv=0;} if(S.coverTo){clearTimeout(S.coverTo);S.coverTo=0;} if(S.limitTo){clearTimeout(S.limitTo);S.limitTo=0;} S.running=false; S.lock=true; S.stimVisible=false; S.armed=false; hideStim(); show('home'); }
 
 seg('segModo'); seg('segEstimulo'); seg('segEnsayos');
+(function(){ var inf=$('extremo-info'); if(!inf) return; var t0=null;
+  inf.addEventListener('touchstart', function(e){ var t=e.touches[0]; t0={x:t.clientX,y:t.clientY,ts:Date.now()}; }, {passive:true});
+  inf.addEventListener('touchend', function(e){ if(!t0) return; var c=e.changedTouches[0]; var moved=Math.abs(c.clientX-t0.x)+Math.abs(c.clientY-t0.y); var dt=Date.now()-t0.ts; t0=null; if(moved<14 && dt<700){ startExtremoFromInfo(); } });
+  inf.addEventListener('click', function(){ startExtremoFromInfo(); });
+})();
 segRank('segModoR'); segRank('segEstR'); segRank('segEnsR');
 $('btnRank2').addEventListener('click', showRanking);
 $('btnGuardar').addEventListener('click', function(){
