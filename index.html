@@ -1129,12 +1129,12 @@ document.addEventListener('click', function(e){ if(e.target.closest && e.target.
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import { initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 const firebaseConfig = {
-  apiKey: "AIzaSyC-8w5PDSdxHWkyeSYgzJGo8ToatLj2Ewg",
-  authDomain: "rds-processing-test.firebaseapp.com",
-  projectId: "rds-processing-test",
-  storageBucket: "rds-processing-test.firebasestorage.app",
-  messagingSenderId: "827379568405",
-  appId: "1:827379568405:web:f9c300c8f1c70dcb3c631c"
+  apiKey: "AIzaSyBbEgbWddPt_rhPM24bL_Nacp7TAlh1biM",
+  authDomain: "rds-reaction-test.firebaseapp.com",
+  projectId: "rds-reaction-test",
+  storageBucket: "rds-reaction-test.firebasestorage.app",
+  messagingSenderId: "490684952529",
+  appId: "1:490684952529:web:bb53a9813bd58ecdb3baf0"
 };
 let db=null;
 try{
@@ -1145,12 +1145,12 @@ try{
 window.fbReady=!!db;
 window.fbSave=async function(rec){
   if(!db) return false;
-  try{ await addDoc(collection(db,'scores'), rec); return true; }catch(e){ return false; }
+  try{ await addDoc(collection(db,'scores_processing'), rec); return true; }catch(e){ return false; }
 };
 window.fbLoad=async function(mode,stim,total){
   if(!db) return null;
   try{
-    const q=query(collection(db,'scores'), where('mode','==',mode), where('stim','==',stim), where('total','==',total));
+    const q=query(collection(db,'scores_processing'), where('mode','==',mode), where('stim','==',stim), where('total','==',total));
     const snap=await getDocs(q);
     const out=[]; snap.forEach(function(d){ out.push(d.data()); });
     return out;
