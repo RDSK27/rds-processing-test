@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="light">
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-title" content="RDS Processing">
@@ -59,20 +59,22 @@ if('serviceWorker' in navigator){
     color-scheme:light;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-  html,body{height:100%;background:#FFFFFF;overflow:hidden;overscroll-behavior:none;}
+  html,body{height:100%;background:#000000;overflow:hidden;overscroll-behavior:none;}
   body{
     font-family:Arial,Helvetica,sans-serif;
-    background:#FFFFFF;
+    background:transparent;
     color:var(--negro);
     -webkit-user-select:none;user-select:none;
     touch-action:manipulation;
     overflow:hidden;overscroll-behavior:none;
   }
-  body::after{content:"";position:fixed;left:0;right:0;bottom:0;height:160px;background:#FFFFFF;z-index:-1;pointer-events:none;}
+  body::before{content:"";position:fixed;top:0;left:0;right:0;bottom:0;background:#000000;z-index:-2;pointer-events:none;}
+  body::after{content:"";position:fixed;top:0;bottom:0;left:0;right:0;margin:0 auto;width:560px;max-width:100%;background:#FFFFFF;z-index:-1;pointer-events:none;}
+  body.home-active::after{background:#b0b4b8;}
   .app{position:relative;max-width:560px;margin:0 auto;height:100vh;height:100dvh;display:flex;flex-direction:column;background:#FFFFFF;}
 
   /* ---------- Header ---------- */
-  header{ width:100%; flex-shrink:0; background:#111; border-bottom:4px solid #b03020; display:flex; flex-direction:column; align-items:center; padding:0; }
+  header{ width:100%; flex-shrink:0; background:#000000; border-bottom:4px solid #b03020; display:flex; flex-direction:column; align-items:center; padding:0; padding-top:env(safe-area-inset-top,0px); }
   header img{ width:100%; height:auto; display:block; margin-bottom:0; }
   .subtitle{ display:block; width:100%; box-sizing:border-box; font-size:0.58rem; letter-spacing:0.14em; color:#cfcfcf; text-transform:none; padding:8px 0 8px; text-align:center; background:linear-gradient(rgba(0,0,0,0.34),rgba(0,0,0,0.34)),var(--carbon); background-size:cover; background-position:center; }
 
@@ -285,7 +287,7 @@ if('serviceWorker' in navigator){
   #transition-text { color:#fff; font-size:1.6rem; font-weight:900; font-family:Arial,sans-serif; letter-spacing:0.05em; text-align:center; text-transform:uppercase; border-top:4px solid #b03020; border-bottom:4px solid #b03020; padding:16px 30px; }
 </style>
 </head>
-<body>
+<body class="home-active">
 <div class="app">
 
   <header>
@@ -532,7 +534,7 @@ function glyphSVG(idx){
 }
 
 function $(id){ return document.getElementById(id); }
-function show(id){ var s=document.querySelectorAll('.screen'); for(var i=0;i<s.length;i++) s[i].classList.remove('active'); $(id).classList.add('active'); }
+function show(id){ var s=document.querySelectorAll('.screen'); for(var i=0;i<s.length;i++) s[i].classList.remove('active'); $(id).classList.add('active'); document.body.classList.toggle('home-active', id==='home'); }
 function two(n){ return (n<10?'0':'')+n; }
 function fmtTime(ms){ var cs=Math.floor(ms/10), cc=cs%100, s=Math.floor(cs/100), sec=s%60, m=Math.floor(s/60); return m+':'+two(sec)+'.'+two(cc); }
 function fmtDate(ts){ if(!ts) return ''; var d=new Date(ts); return two(d.getDate())+'/'+two(d.getMonth()+1); }
