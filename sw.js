@@ -1,5 +1,5 @@
 /* RDS Processing Speed Test - Service Worker */
-var CACHE = 'prst-v21';
+var CACHE = 'prst-v22';
 var ASSETS = [
   './',
   './index.html',
