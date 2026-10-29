@@ -307,6 +307,23 @@ if('serviceWorker' in navigator){
   #transition-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:#111; z-index:9999; align-items:center; justify-content:center; flex-direction:column; }
   #transition-overlay.active { display:flex; }
   #transition-text { color:#fff; font-size:1.6rem; font-weight:900; font-family:Arial,sans-serif; letter-spacing:0.05em; text-align:center; text-transform:uppercase; border-top:4px solid #b03020; border-bottom:4px solid #b03020; padding:16px 30px; }
+  /* ===== modo x2 (dos jugadores) ===== */
+  body.x2-active header{display:none;}
+  #x2{background:#fff;touch-action:none;-webkit-user-select:none;user-select:none;}
+  .x2-zone{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:8px 12px 10px;box-sizing:border-box;background:#fff;}
+  .x2-top{transform:rotate(180deg);}
+  .x2-info{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:40px;}
+  .x2-sc{font:900 20px Arial,sans-serif;color:#111;white-space:nowrap;}
+  .x2-msg{flex:1;text-align:center;font:900 17px Arial,sans-serif;color:var(--rojo);text-transform:uppercase;letter-spacing:.03em;}
+  .x2-zone .pad{flex:1;}
+  .x2-mid{display:flex;align-items:center;justify-content:space-between;gap:10px;height:136px;flex:none;background:#111;border-top:4px solid #b03020;border-bottom:4px solid #b03020;padding:6px 14px;box-sizing:border-box;}
+  .x2-vert{writing-mode:vertical-rl;transform:rotate(180deg);color:#fff;font:800 14px Arial,sans-serif;line-height:1.5;text-align:center;white-space:nowrap;}
+  #x2Stim{width:150px;height:100px;gap:12px;border:2px solid #333;}
+  #x2Stim.x2-lights{background:#fff;}
+  .x2-lt{display:block;width:30px;height:30px;border-radius:50%;background:#d8281c;box-shadow:inset 0 3px 5px rgba(255,255,255,.35),0 0 10px rgba(216,40,28,.7);}
+  .x2-right{width:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+  #x2Stop{width:54px;height:54px;border-radius:50%;border:3px solid #fff;background:#b03020;color:#fff;font:900 26px Arial,sans-serif;line-height:1;cursor:pointer;}
+  .x2-bt{width:78px;padding:9px 0;background:#fff;color:#111;border:0;border-radius:6px;font:900 12px Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;}
 </style>
 </head>
 <body class="home-active">
@@ -331,6 +348,7 @@ if('serviceWorker' in navigator){
       <button class="sel" data-v="normal">Normal</button>
       <button data-v="extremo">Extremo</button>
       <button data-v="limite">L&#237;mite</button>
+      <button data-v="x2">x2</button>
     </div>
 
     <div class="segment" id="segEstimulo">
@@ -398,6 +416,31 @@ if('serviceWorker' in navigator){
 
   </main>
 
+  </section>
+
+  <section id="x2" class="screen">
+    <div class="x2-zone x2-top" id="x2z1">
+      <div class="x2-info"><div class="x2-sc"></div><div class="x2-msg"></div></div>
+      <div class="pad">
+        <div class="pad-half pad-red" data-p="1" data-c="rojo"><span>Rojo</span></div>
+        <div class="pad-half pad-blue" data-p="1" data-c="azul"><span>Azul</span></div>
+      </div>
+    </div>
+    <div class="x2-mid">
+      <div class="x2-vert" id="x2Vert"></div>
+      <div class="stim-box" id="x2Stim"></div>
+      <div class="x2-right">
+        <button id="x2Stop" type="button" aria-label="Parar">&#10005;</button>
+        <div id="x2Btns" style="display:none;flex-direction:column;gap:8px;"><button class="x2-bt" type="button" id="x2Home">&#8592; Inicio</button><button class="x2-bt" type="button" id="x2Again">&#8634; Repetir</button></div>
+      </div>
+    </div>
+    <div class="x2-zone x2-bot" id="x2z0">
+      <div class="x2-info"><div class="x2-sc"></div><div class="x2-msg"></div></div>
+      <div class="pad">
+        <div class="pad-half pad-red" data-p="0" data-c="rojo"><span>Rojo</span></div>
+        <div class="pad-half pad-blue" data-p="0" data-c="azul"><span>Azul</span></div>
+      </div>
+    </div>
   </section>
 
   <section id="game" class="screen">
@@ -569,7 +612,7 @@ function glyphSVG(idx){
 }
 
 function $(id){ return document.getElementById(id); }
-function show(id){ if(id!=='ranking' && typeof stopRankWatch==='function') stopRankWatch(); var s=document.querySelectorAll('.screen'); for(var i=0;i<s.length;i++) s[i].classList.remove('active'); $(id).classList.add('active'); document.body.classList.toggle('home-active', id==='home'); }
+function show(id){ if(id!=='ranking' && typeof stopRankWatch==='function') stopRankWatch(); var s=document.querySelectorAll('.screen'); for(var i=0;i<s.length;i++) s[i].classList.remove('active'); $(id).classList.add('active'); document.body.classList.toggle('home-active', id==='home'); document.body.classList.toggle('x2-active', id==='x2'); }
 function two(n){ return (n<10?'0':'')+n; }
 function fmtTime(ms){ var cs=Math.floor(ms/10), cc=cs%100, s=Math.floor(cs/100), sec=s%60, m=Math.floor(s/60); return m+':'+two(sec)+'.'+two(cc); }
 function fmtDate(ts){ if(!ts) return ''; var d=new Date(ts); return two(d.getDate())+'/'+two(d.getMonth()+1); }
@@ -614,7 +657,8 @@ function selVal(id){ var b=$(id).querySelector('button.sel'); return b?b.getAttr
 var S={mode:'normal',stim:'cambia',total:15,name:'RDS',sport:'',target:0,curTarget:0,cellSyms:[],targetOrder:[],trial:0,times:[],t0:0,trialT0:0,running:false,raf:0,lock:true,countIv:0,coverTo:0,curLimit:0,limitTo:0,resEnsayos:0};
 
 function filterInitials(el){ el.value=el.value.replace(/[^A-Za-z]/g,'').toUpperCase(); }
-function startGame(){ try{ warmRank(selVal('segModo')||'normal', selVal('segEstimulo')||'cambia', parseInt(selVal('segEnsayos')||'15',10)); }catch(e){}
+function startGame(){ if(selVal('segModo')==='x2'){ startX2(); return; }
+  try{ warmRank(selVal('segModo')||'normal', selVal('segEstimulo')||'cambia', parseInt(selVal('segEnsayos')||'15',10)); }catch(e){}
   S.mode=selVal('segModo')||'normal';
   S.stim=selVal('segEstimulo')||'cambia';
   S.total=parseInt(selVal('segEnsayos')||'15',10);
@@ -1179,7 +1223,7 @@ function showRanking(){
   var btn=document.getElementById('btn-hide-repeated');
   if(btn) btn.textContent='Mostrar repetidos';
   updateRankSaveBtn();
-  var mode=selVal('segModo')||'normal';
+  var mode=selVal('segModo')||'normal'; if(mode==='x2') mode='normal';   /* x2 no tiene ranking */
   var stim=selVal('segEstimulo')||'cambia';
   var total=parseInt(selVal('segEnsayos')||'15',10);
   setSeg('segModoR',mode); setSeg('segEstR',stim); setSeg('segEnsR',total);
@@ -1259,7 +1303,7 @@ function warmRank(mode,stim,total){
   window.fbLoad(mode,stim,total).then(function(rows){ if(rows){ saveRankCache(rcKey, rows); } }).catch(function(){});
 }
 
-function goHome(){ if(S.countIv){clearInterval(S.countIv);S.countIv=0;} if(S.coverTo){clearTimeout(S.coverTo);S.coverTo=0;} if(S.limitTo){clearTimeout(S.limitTo);S.limitTo=0;} S.running=false; S.lock=true; S.stimVisible=false; S.armed=false; hideStim(); show('home'); }
+function goHome(){ if(typeof xClear==='function') xClear(); X.on=false; if(S.countIv){clearInterval(S.countIv);S.countIv=0;} if(S.coverTo){clearTimeout(S.coverTo);S.coverTo=0;} if(S.limitTo){clearTimeout(S.limitTo);S.limitTo=0;} S.running=false; S.lock=true; S.stimVisible=false; S.armed=false; hideStim(); show('home'); }
 
 seg('segModo'); seg('segEstimulo'); seg('segEnsayos');
 (function(){ var inf=$('extremo-info'); if(!inf) return; var t0=null;
@@ -1322,6 +1366,83 @@ function padHandler(e){
 var _padLastTouch=0;
 $('pad').addEventListener('touchstart', function(e){ _padLastTouch=Date.now(); padHandler(e); }, {passive:false});
 $('pad').addEventListener('mousedown', function(e){ if(Date.now()-_padLastTouch<700) return; padHandler(e); });
+
+/* ---------- modo x2: dos jugadores, sin ranking (2026-10-29) ----------
+   Normal, con espera, a 15 puntos por juego, mejor de 3 juegos. Jugador 1 = mitad de abajo, jugador 2 = mitad de arriba (girada 180 grados).
+   Cada jugador tiene su Rojo/Azul. Sale un cuadrado rojo o azul: gana el punto quien pulse primero SU color correcto; si pulsa el color equivocado
+   (o antes de que salga) se le RESTA 1 (puede quedar en negativo) y el punto es para el otro. Tras la primera pulsacion se ignora todo X_FREEZE ms. */
+var X={on:false,pts:[0,0],games:[0,0],gameNo:1,state:'',color:'',t0:0,to:0};
+var X_TARGET=15, X_FREEZE=1000, X_WINGAMES=2;
+function xClear(){ if(X.to){ clearTimeout(X.to); X.to=0; } }
+function xMsg(t){ var m=document.querySelectorAll('#x2 .x2-msg'), i; for(i=0;i<m.length;i++) m[i].textContent=t; }
+function xBtns(end){ $('x2Stop').style.display=end?'none':'block'; $('x2Btns').style.display=end?'flex':'none'; }
+function xRender(){
+  var p;
+  for(p=0;p<2;p++){
+    var z=$('x2z'+p).querySelector('.x2-sc');
+    z.innerHTML='J'+(p+1)+' &nbsp;<span style="font-size:26px">'+X.pts[p]+'</span> &ndash; '+X.pts[1-p]+' <span style="font-size:13px;color:#666">&nbsp;juegos '+X.games[p]+'&ndash;'+X.games[1-p]+'</span>';
+  }
+  $('x2Vert').innerHTML='J1 '+X.pts[0]+' &ndash; '+X.pts[1]+' J2<br>Juegos '+X.games[0]+' &ndash; '+X.games[1];
+}
+function startX2(){
+  xClear(); X.on=true; X.pts=[0,0]; X.games=[0,0]; X.gameNo=1; X.state='';
+  show('x2'); xBtns(false); xMsg(''); xRender(); xLights();
+}
+function xLights(){   /* semaforo: 3 luces rojas, se quita una cada 0,8 s y al quitar la tercera empieza */
+  var box=$('x2Stim'), n=3;
+  X.state='count'; box.className='stim-box x2-lights';
+  function draw(){ var h='', i; for(i=0;i<n;i++) h+='<i class="x2-lt"></i>'; box.innerHTML=h; }
+  draw();
+  function step(){
+    X.to=setTimeout(function(){ X.to=0; if(!X.on) return; n--; if(n<=0){ box.innerHTML=''; xNext(); return; } draw(); step(); }, 800);
+  }
+  step();
+}
+function xNext(){
+  var box=$('x2Stim'); box.className='stim-box'; box.innerHTML='';
+  X.state='wait';
+  X.to=setTimeout(function(){
+    X.to=0; if(!X.on) return;
+    X.color=Math.random()<0.5?'rojo':'azul';
+    box.className='stim-box '+X.color; X.state='stim'; X.t0=performance.now();
+  }, 500+Math.random()*3500);
+}
+function xPress(p,c){
+  if(!X.on || (X.state!=='wait' && X.state!=='stim')) return;
+  var now=performance.now(), win, txt;
+  if(X.state==='wait'){ xClear(); X.pts[p]--; X.pts[1-p]++; win=1-p; txt='Salida en falso J'+(p+1)+' -1 &middot; Punto jugador '+(win+1); }
+  else if(c===X.color){ X.pts[p]++; win=p; txt='Punto jugador '+(p+1)+' &middot; '+Math.round(now-X.t0)+' ms'; }
+  else { X.pts[p]--; X.pts[1-p]++; win=1-p; txt='Fallo J'+(p+1)+' -1 &middot; Punto jugador '+(win+1); }
+  X.state='freeze';
+  var box=$('x2Stim'); box.className='stim-box'; box.innerHTML='';
+  var m=document.querySelectorAll('#x2 .x2-msg'), i; for(i=0;i<m.length;i++) m[i].innerHTML=txt;
+  if(win===p) sndSymbol(); else sndFail();
+  xRender();
+  X.to=setTimeout(function(){ X.to=0; xMsg(''); xAfter(); }, X_FREEZE);
+}
+function xAfter(){
+  if(!X.on) return;
+  var i; for(i=0;i<2;i++){ if(X.pts[i]>=X_TARGET){ xGameEnd(i); return; } }
+  xNext();
+}
+function xGameEnd(i){
+  X.games[i]++; xRender();
+  if(X.games[i]>=X_WINGAMES){ X.on=false; X.state='end'; xMsg('¡Gana el jugador '+(i+1)+'!'); xBtns(true); sndSymbol(); return; }
+  xMsg('Juego para el jugador '+(i+1));
+  X.to=setTimeout(function(){ X.to=0; if(!X.on) return; xMsg(''); X.pts=[0,0]; X.gameNo++; xRender(); xLights(); }, 2200);
+}
+function xStop(){ xClear(); X.on=false; X.state='end'; var b=$('x2Stim'); b.className='stim-box'; b.innerHTML=''; xMsg('Partida parada'); xBtns(true); }
+(function(){
+  var sec=$('x2');
+  sec.addEventListener('pointerdown', function(e){
+    var h=e.target.closest ? e.target.closest('.pad-half') : null; if(!h) return;
+    if(e.cancelable) e.preventDefault();
+    xPress(parseInt(h.getAttribute('data-p'),10), h.getAttribute('data-c'));
+  }, {passive:false});
+  $('x2Stop').addEventListener('click', xStop);
+  $('x2Home').addEventListener('click', function(){ goHome(); });
+  $('x2Again').addEventListener('click', startX2);
+})();
 
 function unlockAudio(){ audioCtx(); document.removeEventListener('touchstart',unlockAudio); document.removeEventListener('mousedown',unlockAudio); }
 document.addEventListener('touchstart',unlockAudio,{passive:true});
