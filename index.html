@@ -109,6 +109,8 @@ if('serviceWorker' in navigator){
   }
   .segment button:last-child{border-right:0;}
   .segment button.sel{background:var(--rojo);color:#fff;text-shadow:none;}
+  .segment button.x2on{background:#F5C400;color:#111;text-shadow:none;}
+  .segment button.x2-off{opacity:.35;pointer-events:none;}
   #segEstimulo,#segEnsayos{margin-top:0;}
 
   /* ---------- Acciones (mas pequenas y estrechas, como en la referencia) ---------- */
@@ -320,17 +322,23 @@ if('serviceWorker' in navigator){
   .x2-area{flex:1;min-height:0;position:relative;display:flex;flex-direction:column;}
   .x2-zone .pad{flex:1;}
   .x2-flash{position:absolute;left:0;right:0;bottom:12px;text-align:center;font:900 17px Arial,sans-serif;color:#111;text-transform:uppercase;pointer-events:none;}
-  .x2-panel{position:absolute;inset:0;z-index:2;display:none;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:10px 14px;box-sizing:border-box;background:#fff;border:2px solid #111;border-radius:8px;text-align:center;overflow:auto;font-family:Arial,sans-serif;color:#111;}
+  .x2-panel{touch-action:pan-y;position:absolute;inset:0;z-index:2;display:none;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:10px 14px;box-sizing:border-box;background:#fff;border:2px solid #111;border-radius:8px;text-align:center;overflow:auto;font-family:Arial,sans-serif;color:#111;}
   .x2-panel.on{display:flex;}
   .x2-pt{font-size:21px;font-weight:900;line-height:1.15;color:var(--rojo);}
   .x2-pr{font-size:15px;font-weight:700;line-height:1.3;}
   .x2-pbs{display:flex;gap:10px;}
   .x2-bt{min-width:120px;padding:12px 16px;background:var(--rojo);color:#fff;border:0;border-radius:6px;font:900 15px Arial,sans-serif;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;}
   .x2-bt.x2-sec{background:#111;}
-  @media (max-height:620px){ .x2-panel{gap:5px;padding:4px 10px;} .x2-pt{font-size:18px;} .x2-pr{font-size:13px;line-height:1.2;} .x2-bt{min-width:104px;padding:9px 12px;font-size:14px;} }
+  @media (max-height:620px){ .x2-panel{gap:3px;padding:2px 10px;} .x2-pt{font-size:18px;} .x2-pr{font-size:13px;line-height:1.2;} .x2-bt{min-width:104px;padding:9px 12px;font-size:14px;} .x2-rules{font-size:11px;line-height:1.15;} }
   .x2-mid{display:flex;align-items:center;justify-content:center;position:relative;flex:none;background:#111;border-top:3px solid #b03020;border-bottom:3px solid #b03020;padding:4px 0;box-sizing:border-box;}
   #x2Stim{width:132px;height:58px;gap:10px;border:2px solid #333;}
   #x2Stim.x2-lights{background:#fff;}
+  #x2Stim.negro{border-color:#fff;}
+  #x2Stim.blanco{border-color:#fff;}
+  #x2Stim svg{width:78px;height:50px;}
+  .x2-g{font:900 42px/1 Arial,sans-serif;-webkit-text-stroke:2px var(--negro);paint-order:stroke fill;}
+  .x2-g.x2-inv{transform:rotate(180deg);}
+  .x2-rules{font-size:12.5px;font-weight:600;line-height:1.25;}
   .x2-lt{display:block;width:26px;height:26px;border-radius:50%;background:#d8281c;box-shadow:inset 0 3px 5px rgba(255,255,255,.35),0 0 10px rgba(216,40,28,.7);}
   #x2Stop{position:absolute;right:12px;top:50%;margin-top:-20px;width:40px;height:40px;padding:0;border-radius:50%;border:2px solid #fff;background:#b03020;color:#fff;font:900 20px Arial,sans-serif;line-height:1;cursor:pointer;}
 </style>
@@ -380,7 +388,7 @@ if('serviceWorker' in navigator){
           <button class="start-btn rank-btn" ontouchend="event.stopPropagation();" onclick="showRanking()" aria-label="Ranking"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#333333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 13.5v7.5M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 4H4v2a3 3 0 0 0 3 3M17 4h3v2a3 3 0 0 1-3 3"/></svg></button>
         </div>
       </div>
-  <div class="app-ver" style="margin-top:6px;padding-top:0;">v44</div>
+  <div class="app-ver" style="margin-top:6px;padding-top:0;">v45</div>
   <div id="user-name-bar" style="margin-top:8px;">
     <div style="display:flex;width:200px;gap:0;margin:0 auto;">
       <input id="user-ini-input" type="text" maxlength="3" placeholder="INI"
@@ -432,8 +440,8 @@ if('serviceWorker' in navigator){
       <div class="x2-info"><span class="x2-pts"></span><span class="x2-gm"></span><span class="x2-cu"></span></div>
       <div class="x2-area">
         <div class="pad">
-          <div class="pad-half pad-red" data-p="1" data-c="rojo"><span>Rojo</span></div>
-          <div class="pad-half pad-blue" data-p="1" data-c="azul"><span>Azul</span></div>
+          <div class="pad-half pad-red" data-p="1" data-pos="izq"><span>Rojo</span></div>
+          <div class="pad-half pad-blue" data-p="1" data-pos="dcha"><span>Azul</span></div>
         </div>
         <div class="x2-flash"></div>
         <div class="x2-panel"></div>
@@ -447,8 +455,8 @@ if('serviceWorker' in navigator){
       <div class="x2-info"><span class="x2-pts"></span><span class="x2-gm"></span><span class="x2-cu"></span></div>
       <div class="x2-area">
         <div class="pad">
-          <div class="pad-half pad-red" data-p="0" data-c="rojo"><span>Rojo</span></div>
-          <div class="pad-half pad-blue" data-p="0" data-c="azul"><span>Azul</span></div>
+          <div class="pad-half pad-red" data-p="0" data-pos="izq"><span>Rojo</span></div>
+          <div class="pad-half pad-blue" data-p="0" data-pos="dcha"><span>Azul</span></div>
         </div>
         <div class="x2-flash"></div>
         <div class="x2-panel"></div>
@@ -660,6 +668,7 @@ function seg(id){
   var box=$(id);
   box.addEventListener('click', function(e){
     var b=e.target.closest('button'); if(!b) return;
+    if(b.getAttribute('data-v')==='x2'){ xToggle(b); return; }
     var all=box.querySelectorAll('button');
     for(var i=0;i<all.length;i++) all[i].classList.remove('sel');
     b.classList.add('sel');
@@ -670,7 +679,7 @@ function selVal(id){ var b=$(id).querySelector('button.sel'); return b?b.getAttr
 var S={mode:'normal',stim:'cambia',total:15,name:'RDS',sport:'',target:0,curTarget:0,cellSyms:[],targetOrder:[],trial:0,times:[],t0:0,trialT0:0,running:false,raf:0,lock:true,countIv:0,coverTo:0,curLimit:0,limitTo:0,resEnsayos:0};
 
 function filterInitials(el){ el.value=el.value.replace(/[^A-Za-z]/g,'').toUpperCase(); }
-function startGame(){ if(selVal('segModo')==='x2'){ startX2(); return; }
+function startGame(){ if(isX2()){ startX2(); return; }
   try{ warmRank(selVal('segModo')||'normal', selVal('segEstimulo')||'cambia', parseInt(selVal('segEnsayos')||'15',10)); }catch(e){}
   S.mode=selVal('segModo')||'normal';
   S.stim=selVal('segEstimulo')||'cambia';
@@ -1236,7 +1245,7 @@ function showRanking(){
   var btn=document.getElementById('btn-hide-repeated');
   if(btn) btn.textContent='Mostrar repetidos';
   updateRankSaveBtn();
-  var mode=selVal('segModo')||'normal'; if(mode==='x2') mode='normal';   /* x2 no tiene ranking */
+  var mode=selVal('segModo')||'normal';
   var stim=selVal('segEstimulo')||'cambia';
   var total=parseInt(selVal('segEnsayos')||'15',10);
   setSeg('segModoR',mode); setSeg('segEstR',stim); setSeg('segEnsR',total);
@@ -1385,10 +1394,45 @@ $('pad').addEventListener('mousedown', function(e){ if(Date.now()-_padLastTouch<
    Cada jugador tiene su Rojo/Azul. Sale un cuadrado rojo o azul: gana el punto quien pulse primero SU color correcto; si pulsa el color equivocado
    (o antes de que salga) se le RESTA 1 (puede quedar en negativo) y el punto es para el otro. Tras la primera pulsacion se ignora todo X_FREEZE ms.
    Cada juego = 15 cuadros. Gana quien tenga X_MARGIN puntos de ventaja al llegar a 15; si no, cuadros extra (puntos parpadeando) hasta conseguirla.
-   Se para antes si ya esta decidido: la ventaja, restando lo maximo que puede recortarse (X_SWING por cuadro restante), sigue siendo >= X_MARGIN. */
-var X={on:false,pts:[0,0],games:[0,0],gameNo:1,n:0,state:'',color:'',t0:0,to:0,hist:[]};
+   Se para antes si ya esta decidido: la ventaja, restando lo maximo que puede recortarse (X_SWING por cuadro restante), sigue siendo >= X_MARGIN.
+   x2 es un interruptor que se combina con Normal o Extremo (X.mode). En Extremo se usan las reglas del modo de un jugador: la secuencia (buildExtremoSeq) y los cambios de lado de Rojo/Azul (buildSwapBoundaries), iguales para los dos.
+   Cada jugador tiene su objetivo (X.tgt): la flecha blanca apunta a un lado FISICO, que para el jugador de arriba es el lado contrario; y blanco/negro se refieren al color que le tocaba a ESE jugador en el cuadro anterior (X.prev). */
+var X={on:false,mode:'normal',pts:[0,0],games:[0,0],gameNo:1,n:0,state:'',t0:0,to:0,hist:[],seq:[],si:0,swapped:false,swapAt:{},prev:[null,null],tgt:[null,null]};
 var X_TOTAL=15, X_SWING=2, X_MARGIN=2, X_FREEZE=1000, X_WINGAMES=2, X_ORD=['primer','segundo','tercer'];
+function isX2(){ return $('segModo').querySelector('[data-v="x2"]').classList.contains('x2on'); }
+function xToggle(b){
+  var box=$('segModo'), on=b.classList.toggle('x2on'), lim=box.querySelector('[data-v="limite"]');
+  lim.classList.toggle('x2-off',on);   /* x2 solo se combina con Normal o Extremo */
+  if(on && lim.classList.contains('sel')){ lim.classList.remove('sel'); box.querySelector('[data-v="normal"]').classList.add('sel'); }
+}
 function xClear(){ if(X.to){ clearTimeout(X.to); X.to=0; } }
+function xColorAt(pos){ return (pos==='izq')!==X.swapped?'rojo':'azul'; }
+function xSides(){ var h=document.querySelectorAll('#x2 .pad-half[data-pos]'), i; for(i=0;i<h.length;i++) setHalf(h[i],xColorAt(h[i].getAttribute('data-pos'))); }
+function xGameSetup(){
+  var ext=X.mode==='extremo';
+  X.seq=ext?buildExtremoSeq(X_TOTAL):[]; X.si=0; X.swapped=false; X.prev=[null,null];
+  X.swapAt=ext?buildSwapBoundaries(X_TOTAL,swapCount(X_TOTAL)):{};
+  xSides();
+}
+function xDraw(){
+  if(X.mode!=='extremo') return {rect:Math.random()<0.5?'rojo':'azul',glyph:'minus'};
+  if(X.si>=X.seq.length){ X.seq=buildExtremoSeq(X_TOTAL); X.si=0; }   /* cuadros extra tras el 15 */
+  return X.seq[X.si++];
+}
+function xResolve(d,p){
+  if(d.glyph==='arrowW') return {t:'pos',v:p===0?d.dir:(d.dir==='izq'?'dcha':'izq')};
+  if(d.rect==='blanco'||d.rect==='negro'){
+    if(d.rect==='blanco') return {t:'color',v:X.prev[p]};
+    return {t:'color',v:X.prev[p]==='rojo'?'azul':'rojo'};
+  }
+  return resolveTarget(d);
+}
+function xGlyph(d){
+  if(d.glyph==='arrowW'||d.glyph==='arrowC') return arrowSVG(d.dir,d.glyph==='arrowC'?cssVar(d.gcolor==='rojo'?'--rojo':'--azul'):'#fff');
+  var st=' style="color:'+glyphColor(d)+'"', t=glyphText(d);
+  if(d.glyph==='A'||d.glyph==='R') return '<span class="x2-g"'+st+'>'+t+'</span><span class="x2-g x2-inv"'+st+'>'+t+'</span>';   /* letra para cada jugador: los dos ven lo mismo */
+  return '<span class="x2-g"'+st+'>'+t+'</span>';
+}
 function xZone(p,sel){ return $('x2z'+p).querySelector(sel); }
 function xFlash(a,b){ xZone(0,'.x2-flash').innerHTML=a||''; xZone(1,'.x2-flash').innerHTML=b||''; }
 function xPanel(p,html){ var e=xZone(p,'.x2-panel'); e.innerHTML=html||''; e.classList.toggle('on',!!html); }
@@ -1406,16 +1450,19 @@ function xRender(){
     xZone(p,'.x2-cu').textContent=X.n+'/'+X_TOTAL;
   }
 }
-function xReset(){ xClear(); X.pts=[0,0]; X.games=[0,0]; X.gameNo=1; X.n=0; X.hist=[]; xPanelsOff(); xFlash(); xStim(); }
+function xReset(){ xClear(); X.pts=[0,0]; X.games=[0,0]; X.gameNo=1; X.n=0; X.hist=[]; xPanelsOff(); xFlash(); xStim(); X.swapped=false; xSides(); }
 function startX2(){   /* pantalla inicial con la informacion para cada jugador */
+  X.mode=selVal('segModo')==='extremo'?'extremo':'normal';
   xReset(); X.on=false; X.state='intro';
   show('x2'); $('x2Stop').style.display='block'; xRender();
-  for(var p=0;p<2;p++) xPanel(p,'<div class="x2-pt">Jugador '+(p+1)+'</div>'
-    +'<div class="x2-pr">Uno contra uno, al mejor de 3 juegos de 15 puntos.<br>Si al llegar a 15 no hay 2 de diferencia, se sigue hasta conseguirla.</div>'
+  var ext=X.mode==='extremo';
+  for(var p=0;p<2;p++) xPanel(p,'<div class="x2-pt">Jugador '+(p+1)+(ext?' &middot; Extremo':'')+'</div>'
+    +'<div class="x2-pr">'+(ext?'Uno contra uno, al mejor de 3 juegos de 15 puntos (con 2 de diferencia).':'Uno contra uno, al mejor de 3 juegos de 15 puntos.<br>Si al llegar a 15 no hay 2 de diferencia, se sigue hasta conseguirla.')+'</div>'
+    +(ext?'<div class="x2-rules"><b>A</b> azul &middot; <b>R</b> rojo &middot; <b>Flecha blanca</b> hacia donde apunta &middot; <b>Flecha de color</b> ese color &middot; <b>Cuadro blanco</b> tu color anterior &middot; <b>Cuadro negro</b> el contrario &middot; Rojo y Azul pueden cambiar de lado</div>':'')
     +xBtn('start','Empezar'));
 }
-function xBegin(){ xReset(); X.on=true; X.state=''; $('x2Stop').style.display='block'; xRender(); xLights(); }
-function xContinue(){ X.pts=[0,0]; X.n=0; X.gameNo++; X.state=''; xPanelsOff(); xFlash(); xRender(); xLights(); }
+function xBegin(){ xReset(); X.on=true; X.state=''; xGameSetup(); $('x2Stop').style.display='block'; xRender(); xLights(); }
+function xContinue(){ X.pts=[0,0]; X.n=0; X.gameNo++; X.state=''; xGameSetup(); xPanelsOff(); xFlash(); xRender(); xLights(); }
 function xLights(){   /* semaforo: 3 luces rojas, se quita una cada 0,8 s y al quitar la tercera empieza */
   var box=xStim('x2-lights'), n=3;
   X.state='count';
@@ -1431,16 +1478,21 @@ function xNext(){
   X.state='wait';
   X.to=setTimeout(function(){
     X.to=0; if(!X.on) return;
-    X.color=Math.random()<0.5?'rojo':'azul';
-    box.className='stim-box '+X.color; X.state='stim'; X.n++; X.t0=performance.now(); xRender();
+    var d=xDraw();
+    X.tgt=[xResolve(d,0),xResolve(d,1)];
+    box.className='stim-box '+d.rect;
+    if(X.mode==='extremo') box.innerHTML=xGlyph(d);
+    X.state='stim'; X.n++; X.t0=performance.now(); xRender();
   }, 500+Math.random()*3500);
 }
-function xPress(p,c){
+function xPress(p,pos){
   if(!X.on || (X.state!=='wait' && X.state!=='stim')) return;
   var now=performance.now(), win, msg=['',''];
   if(X.state==='wait'){ xClear(); X.n++; X.pts[p]--; X.pts[1-p]++; win=1-p; msg[p]='Salida en falso -1'; msg[win]='Punto +1'; }
-  else if(c===X.color){ X.pts[p]++; win=p; msg[p]='Punto &middot; '+Math.round(now-X.t0)+' ms'; msg[1-p]='Punto rival'; }
+  else if(X.tgt[p].t==='pos'?pos===X.tgt[p].v:xColorAt(pos)===X.tgt[p].v){ X.pts[p]++; win=p; msg[p]='Punto &middot; '+Math.round(now-X.t0)+' ms'; msg[1-p]='Punto rival'; }
   else { X.pts[p]--; X.pts[1-p]++; win=1-p; msg[p]='Fallo -1'; msg[win]='Fallo rival +1'; }
+  if(X.tgt[0]){ for(var q=0;q<2;q++) X.prev[q]=X.tgt[q].t==='pos'?xColorAt(X.tgt[q].v):X.tgt[q].v; X.tgt=[null,null]; }
+  if(X.swapAt[X.n%X_TOTAL]){ X.swapped=!X.swapped; xSides(); }
   X.state='freeze';
   xStim();
   xFlash(msg[0],msg[1]);
@@ -1482,7 +1534,7 @@ function xStop(){
   sec.addEventListener('pointerdown', function(e){
     var h=e.target.closest ? e.target.closest('.pad-half') : null; if(!h) return;
     if(e.cancelable) e.preventDefault();
-    xPress(parseInt(h.getAttribute('data-p'),10), h.getAttribute('data-c'));
+    xPress(parseInt(h.getAttribute('data-p'),10), h.getAttribute('data-pos'));
   }, {passive:false});
   sec.addEventListener('click', function(e){
     var b=e.target.closest ? e.target.closest('[data-x]') : null; if(!b) return;
